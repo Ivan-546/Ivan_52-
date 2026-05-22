@@ -1,4 +1,3 @@
-// ===== Local Storage Manager for Registration =====
 class UserManager {
     constructor() {
         this.userKey = 'maison_user';
@@ -8,12 +7,10 @@ class UserManager {
     registerUser(userData) {
         let users = this.getAllUsers();
         
-        // Check if email already exists
         if (users.some(u => u.email === userData.email)) {
             return { success: false, message: 'Email уже зарегистрирован' };
         }
         
-        // Add new user
         const newUser = {
             id: Date.now(),
             ...userData,
@@ -23,7 +20,6 @@ class UserManager {
         users.push(newUser);
         localStorage.setItem(this.usersKey, JSON.stringify(users));
         
-        // Auto login
         const userToStore = { ...newUser };
         delete userToStore.password;
         localStorage.setItem(this.userKey, JSON.stringify(userToStore));
@@ -39,7 +35,6 @@ class UserManager {
 
 const userManager = new UserManager();
 
-// ===== Form Submission =====
 document.addEventListener('DOMContentLoaded', function() {
     const registrForm = document.getElementById('registrForm');
     if (!registrForm) return;
@@ -54,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const phone = document.getElementById('phone').value.trim();
         const agreeTerms = document.querySelector('input[name="agreeTerms"]').checked;
         
-        // Validation
         if (!fullName || !email || !password || !confirmPassword) {
             alert('Пожалуйста, заполните все обязательные поля');
             return;
@@ -80,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Show loading state with progress
         const submitBtn = document.getElementById('submitBtn');
         const btnText = submitBtn.querySelector('.btn-text');
         const btnLoader = submitBtn.querySelector('.btn-loader');
@@ -91,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
         btnText.style.display = 'none';
         btnLoader.style.display = 'flex';
         
-        // Simulate progress
         let progress = 0;
         const progressInterval = setInterval(() => {
             progress += Math.random() * 30;
@@ -100,14 +92,12 @@ document.addEventListener('DOMContentLoaded', function() {
             progressPercentage.textContent = Math.floor(progress) + '%';
         }, 200);
         
-        // Simulate registration delay
         setTimeout(() => {
             clearInterval(progressInterval);
             progress = 100;
             progressFill.style.width = '100%';
             progressPercentage.textContent = '100%';
             
-            // Register user
             const userData = {
                 name: fullName,
                 email: email,
@@ -118,18 +108,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = userManager.registerUser(userData);
             
             if (result.success) {
-                // Show success message
                 const successModal = document.getElementById('successModal');
                 const successMessage = document.getElementById('successMessage');
                 successMessage.textContent = `Спасибо, ${result.user.name}! Ваш аккаунт создан и вы авторизированы.`;
                 successModal.classList.add('show');
                 
-                // Reset form
                 document.getElementById('registrForm').reset();
                 progressFill.style.width = '0%';
                 progressPercentage.textContent = '0%';
                 
-                // Reset button
                 submitBtn.disabled = false;
                 btnText.style.display = 'block';
                 btnLoader.style.display = 'none';
@@ -138,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 progressFill.style.width = '0%';
                 progressPercentage.textContent = '0%';
                 
-                // Reset button
                 submitBtn.disabled = false;
                 btnText.style.display = 'block';
                 btnLoader.style.display = 'none';
@@ -146,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     });
     
-    // ===== Real-time Password Validation =====
     const registrPassword = document.getElementById('registrPassword');
     const confirmPassword = document.getElementById('confirmPassword');
     
@@ -162,7 +147,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ===== Update Progress Bar =====
     registrForm.addEventListener('input', () => {
         const fullName = document.getElementById('fullName').value.trim();
         const email = document.getElementById('registrEmail').value.trim();
@@ -184,7 +168,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('progressPercentage').textContent = Math.floor(progressPercent) + '%';
     });
     
-    // ===== Theme Toggle =====
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -202,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===== Helper Functions =====
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -225,21 +207,17 @@ function validatePasswords() {
     }
 }
 
-// ===== Keyboard Shortcuts =====
 document.addEventListener('keydown', (e) => {
-    // T - Toggle theme
     if (e.key.toLowerCase() === 't') {
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) themeToggle.click();
     }
-    // Enter - Submit form
     if (e.key === 'Enter') {
         const registrForm = document.getElementById('registrForm');
         if (registrForm) registrForm.dispatchEvent(new Event('submit'));
     }
 });
 
-// ===== Page Visibility API =====
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         console.log('Пользователь ушёл со страницы регистрации');
@@ -248,19 +226,15 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-// ===== Initialization =====
 window.addEventListener('load', () => {
-    // Load theme
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.body.classList.add(savedTheme + '-theme');
     
-    // Update theme toggle button
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
     }
-    
-    // Hide loading screen
+
     setTimeout(() => {
         const loadingScreen = document.getElementById('loadingScreen');
         if (loadingScreen) {
